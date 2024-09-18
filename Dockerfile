@@ -8,7 +8,7 @@ RUN mkdir -p /app
 WORKDIR /app
 
 # Copy current local directory to /app which current directory in container
-COPY . .
+COPY . /app
 
 # Install all dependencies in package.json
 RUN npm install

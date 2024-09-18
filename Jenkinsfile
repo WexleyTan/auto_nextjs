@@ -1,23 +1,36 @@
-pipeline {
-  agent any
-  tools {
-    nodejs 'nodejs'
-  }
-  stages {
-    stage("build") {
-      steps {
-        echo "🚀 Building the application"
-        sh 'docker build -t nextjs_deploys .'
-      }
-    }
+FROM node:18-alpine as base
+RUN apk add --no-cache g++ make py3-pip libc6-compat
+WORKDIR /app
+COPY package*.json ./
+EXPOSE 3000
 
-    stage("deploy") {
-      steps { 
-        echo '🚀 Deploying the application'
-        sh 'docker start nextjs_jenkins || docker run --name nextjs_jenkins -d -p 3001:3000 nextjs_deploys'
-        sh 'docker ps'
-        echo "🚀🚀🚀"
-      }
-    }
-  }
-}
+FROM base as builder
+WORKDIR /app
+COPY . .
+RUN npm run build
+
+
+FROM base as production
+WORKDIR /app
+
+ENV NODE_ENV=production
+RUN npm ci
+
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+USER nextjs
+
+
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/public ./public
+
+CMD npm start
+
+FROM base as dev
+ENV NODE_ENV=development
+RUN npm install
+COPY . .
+CMD npm run dev
+

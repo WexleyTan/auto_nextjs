@@ -1,23 +1,36 @@
-# Base image for pulling the latest official Node.js image from Docker Hub
-FROM node:latest
-
-# Create directory name inside container '-p' flag ensure that directory is created if it doesn't already exist.
-RUN mkdir -p /app
-
-# Set working directory inside container
+FROM node:18-alpine as base
+RUN apk add --no-cache g++ make py3-pip libc6-compat
 WORKDIR /app
-
-# Copy current local directory to /app which current directory in container
-COPY . /app
-
-# Install all dependencies in package.json
-RUN npm install
-
-# Used for applications that need to be compiled before run
-RUN npm run build
-
-# Expose the port on which your NextJS application will run (change as per your application)
+COPY package*.json ./
 EXPOSE 3000
 
-# Run application when the container starts
-CMD ["npm", "start"]
+FROM base as builder
+WORKDIR /app
+COPY . .
+RUN npm run build
+
+
+FROM base as production
+WORKDIR /app
+
+ENV NODE_ENV=production
+RUN npm ci
+
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+USER nextjs
+
+
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/public ./public
+
+CMD npm start
+
+FROM base as dev
+ENV NODE_ENV=development
+RUN npm install
+COPY . .
+CMD npm run dev
+

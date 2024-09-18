@@ -1,24 +1,26 @@
-FROM node:18-alpine as base
-RUN apk add --no-cache g++ make py3-pip libc6-compat
-WORKDIR /app
-COPY package*.json ./
-EXPOSE 3000
+pipeline {
+  agent any
+  tools {
+    nodejs 'nodejs'
+  }
+  stages {
+    stage("build") {
+      steps {
+        echo "🚀 Building the application"
+        sh 'docker build -t nextjs_jenkins .'
+      }
+    }
 
-FROM base as builder
-WORKDIR /app
-COPY . .
-RUN npm run build
-
-
-FROM base as production
-WORKDIR /app
-
-ENV NODE_ENV=production
-RUN npm ci
-
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
-USER nextjs
+    stage("deploy") {
+      steps { 
+        echo '🚀 Deploying the application'
+        sh 'docker start nextjs_jenkins || docker run --name nextjs_jenkins -d -p 3001:3000 nextjs_jenkins'
+        sh 'docker ps'
+        echo "🚀🚀🚀"
+      }
+    }
+  }
+}
 
 
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next

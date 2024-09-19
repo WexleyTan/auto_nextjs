@@ -5,15 +5,14 @@ pipeline {
     }
 
     stages {
+
         stage("testVersion") {
             steps {
                 echo "🚀 Checking node version "
                 sh ' node --version '
             }
         }
-    }
 
-    stages {
         stage("build") {
             steps {
                 echo "🚀 Building the application"

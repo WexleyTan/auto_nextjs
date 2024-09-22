@@ -1,5 +1,10 @@
 pipeline {
     agent any
+
+    environment {
+        DISABLE_AUTH = 'true'
+        DB_ENGINE    = 'nodejs'
+    }
     stages {
         stage('Test') { 
             steps {

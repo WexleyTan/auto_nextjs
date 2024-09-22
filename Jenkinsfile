@@ -6,5 +6,9 @@ pipeline {
                 echo "Hello Camboida"
             }
         }
+    stage('Docker Build') {
+      steps {
+        sh 'docker build -t neathtan/nextjs-web:tagname .'
+      }
     }
 }

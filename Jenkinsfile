@@ -1,17 +1,24 @@
 pipeline {
-    agent any
-    tools {
-        nodejs 'nodejs'
+  agent any
+  tools {
+    nodejs 'nodejs'
+  }
+  stages {
+    stage("build") {
+      steps {
+        echo "🚀 Building the application"
+        sh 'docker build -t nextjs_jenkins .'
+      }
     }
 
-    stages {
-
-        stage("testVersion") {
-            steps {
-                echo "🚀 Checking node version "
-                sh ' node --version '
-            }
-        }
-  
-        }
+    stage("deploy") {
+      steps { 
+        echo '🚀 Deploying the application'
+        sh 'docker start nextjs_jenkins || docker run --name nextjs_jenkins -d -p 3001:3000 nextjs_jenkins'
+        sh 'docker ps'
+        echo "🚀🚀🚀"
+      }
     }
+  }
+}
+

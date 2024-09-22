@@ -12,13 +12,6 @@ pipeline {
                 sh 'npm run build'
             }
         }
-
-        stage('Deploy') {
-            steps {
-                docker.image('neathtan/nextjs-web:latest').build()
-                docker.image('neathtan/nextjs-web:latest').run('-v $HOME:/home/jenkins')
-            }
-        }
     }
 }
 

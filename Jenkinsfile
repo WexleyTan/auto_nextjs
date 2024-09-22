@@ -8,7 +8,6 @@ pipeline {
             args '-v $HOME:/home/jenkins'
         }
     }
-  }
-}
+
 
 

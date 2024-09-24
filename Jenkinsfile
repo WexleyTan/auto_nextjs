@@ -8,12 +8,13 @@ pipeline {
         DOCKER_IMAGE = "${IMAGE}:${BUILD_NUMBER}"
         DOCKER_CREDENTIALS_ID = 'docker_hub'
         GIT_MANIFEST_REPO = "https://github.com/WexleyTan/nextjs_manifest.git"
-        GIT_BRANCH = "argocd"
+        GIT_BRANCH = "main"
         MANIFEST_REPO = "manifest-repo"
-        MANIFEST_FILE_PATH = "manifests/deployment.yaml"
+        MANIFEST_FILE_PATH = "deployment.yaml"
         GIT_CREDENTIALS_ID = 'wexley_Pass'
         
     }
+
     stages {
       stage("checkout") {
         steps {

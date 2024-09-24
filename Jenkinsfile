@@ -17,6 +17,17 @@ pipeline {
         
     }
     stages {
+      stage("checkout") {
+        steps {
+          echo "🚀🤖 Running..."
+          echo "Running on $NODE_NAME"
+          echo "${BUILD_NUMBER}"
+          sh ' docker image prune --all '
+          sh ' pwd '
+          sh 'ls'
+        }
+      }
+
         stage("build and push docker image") {
 
             steps {
@@ -82,10 +93,13 @@ pipeline {
                             git add ${MANIFEST_FILE_PATH}
                             git commit -m "Update image to ${DOCKER_IMAGE}"
                             git push https://${GIT_USER}:${GIT_PASS}@github.com/WexleyTan/nextjs_manifest.git
+                            """
                         }
                     }
                 }
             }
-        } 
-    }
+        }
+        
+  }
 }
+

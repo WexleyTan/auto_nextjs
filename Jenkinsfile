@@ -17,15 +17,13 @@ pipeline {
 
         stage("build") {
             steps {
-              // sh ' mvn clean install '
               sh ' docker build -t ${IMAGE}:${BUILD_NUMBER} . '
             }
         }
-
     stage("push docker image") {
             steps {
                     echo "🚀 Pushing the image to Docker hub"
                     sh 'docker push ${DOCKER_IMAGE}'
                 }
-            }
-}
+    }
+    }}

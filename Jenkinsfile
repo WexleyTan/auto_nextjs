@@ -13,17 +13,19 @@ pipeline {
         MANIFEST_FILE_PATH = "deployment.yaml"
         GIT_CREDENTIALS_ID = 'wexley_Pass'
     }
-      
-        stage("build and push docker image") {
+    stages {
 
+        stage("build") {
             steps {
-                script {
-                    echo "🚀 Building docker image..."
-                    sh ' docker build -t ${DOCKER_IMAGE} .'
-                    sh ' docker images | grep -i ${IMAGE} '
-                    }
-                    echo "🚀 Pushing the image to Docker hub"
-                    sh 'docker push ${DOCKER_IMAGE}'   
-                }
+              // sh ' mvn clean install '
+              sh ' docker build -t ${IMAGE}:${BUILD_NUMBER} . '
             }
         }
+
+    stage("push docker image") {
+            steps {
+                    echo "🚀 Pushing the image to Docker hub"
+                    sh 'docker push ${DOCKER_IMAGE}'
+                }
+            }
+}

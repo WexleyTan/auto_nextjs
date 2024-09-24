@@ -6,7 +6,7 @@ pipeline {
     environment {
         IMAGE = "neathtan/nextjs_cd"
         DOCKER_IMAGE = "${IMAGE}:${BUILD_NUMBER}"
-        DOCKER_CREDENTIALS_ID = 'docker_hub'
+        DOCKER_CREDENTIALS_ID = 'neathtan'
         GIT_MANIFEST_REPO = "https://github.com/WexleyTan/nextjs_manifest.git"
         GIT_BRANCH = "main"
         MANIFEST_REPO = "manifest-repo"

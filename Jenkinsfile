@@ -2,11 +2,13 @@ pipeline {
     agent {
         label 'b'
     }
+    tool {
+        nodejs 'nodejs'
+    }
     stages {
         stage('Test') { 
             steps {
-                sh 'node --version'
-                sh 'env | sort'
+                
             }
         }
     }

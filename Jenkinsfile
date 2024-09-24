@@ -35,12 +35,7 @@ pipeline {
                     echo "🚀 Building docker image..."
                     sh ' docker build -t ${DOCKER_IMAGE} .'
                     sh ' docker images | grep -i ${IMAGE} '
-                    
-                    echo "🚀 Log in Docker hub using Jenkins credentials..."
-                    withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
-                      sh 'echo "${DOCKER_PASS} ${DOCKER_USER}" '
-                      sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                    }
+                
                     echo "🚀 Pushing the image to Docker hub"
                     sh 'docker push ${DOCKER_IMAGE}'
                     

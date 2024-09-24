@@ -21,13 +21,9 @@ pipeline {
                     echo "🚀 Building docker image..."
                     sh ' docker build -t ${DOCKER_IMAGE} .'
                     sh ' docker images | grep -i ${IMAGE} '
-                    
                     }
                     echo "🚀 Pushing the image to Docker hub"
-                    sh 'docker push ${DOCKER_IMAGE}'
-                    
+                    sh 'docker push ${DOCKER_IMAGE}'   
                 }
             }
         }
-    }
-}

@@ -9,7 +9,7 @@ pipeline {
         IMAGE = "neathtan/nextjs_cd"
         DOCKER_IMAGE = "${IMAGE}:${BUILD_NUMBER}"
         DOCKER_CREDENTIALS_ID = 'neathtan'
-        GIT_MANIFEST_REPO = "https://github.com/LynaSovann/nextjs_manifest.git"
+        GIT_MANIFEST_REPO = "https://github.com/WexleyTan/nextjs_manifest.git"
         GIT_BRANCH = "main"
         MANIFEST_REPO = "manifest-repo"
         MANIFEST_FILE_PATH = "deployment.yaml"
@@ -81,8 +81,7 @@ pipeline {
                             echo "🚀 Start pushing to manifest repo"
                             git add ${MANIFEST_FILE_PATH}
                             git commit -m "Update image to ${DOCKER_IMAGE}"
-                            git push https://${GIT_USER}:${GIT_PASS}@github.com/LynaSovann/nextjs_manifest.git
-                            """
+                            git push https://${GIT_USER}:${GIT_PASS}@github.com/WexleyTan/nextjs_manifest.git
                         }
                     }
                 }

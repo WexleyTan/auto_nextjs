@@ -1,30 +1,25 @@
 pipeline {
-    agent {
-      label 'b'
-    }
+    agent any
     tools {
         nodejs 'nodejs'
     }
     environment {
-        IMAGE = "neathtan/nextjs_cd"
+        IMAGE = "neathtan/nextjs-adv"
         DOCKER_IMAGE = "${IMAGE}:${BUILD_NUMBER}"
         DOCKER_CREDENTIALS_ID = 'neathtan'
         GIT_MANIFEST_REPO = "https://github.com/WexleyTan/nextjs_manifest.git"
         GIT_BRANCH = "main"
         MANIFEST_REPO = "manifest-repo"
         MANIFEST_FILE_PATH = "deployment.yaml"
-        GIT_CREDENTIALS_ID = 'GIT_HUB'
+        GIT_CREDENTIALS_ID = 'git_pass'
         
     }
     stages {
       stage("checkout") {
         steps {
-          echo "🚀🤖 Running..."
           echo "Running on $NODE_NAME"
           echo "${BUILD_NUMBER}"
           sh ' docker image prune --all '
-          sh ' pwd '
-          sh 'ls'
         }
       }
 
@@ -32,11 +27,11 @@ pipeline {
 
             steps {
                 script {
-                    echo "🚀 Building docker image..."
+                    echo "Building docker image..."
                     sh ' docker build -t ${DOCKER_IMAGE} .'
                     sh ' docker images | grep -i ${IMAGE} '
                 
-                    echo "🚀 Pushing the image to Docker hub"
+                    echo "Pushing the image to Docker hub"
                     sh 'docker push ${DOCKER_IMAGE}'
                     
                 }
@@ -45,25 +40,22 @@ pipeline {
 
         stage("Cloning the manifest file") {
             steps {
-                sh "pwd"
-                sh "ls -l"
-                echo "🚀 Checking if the manifest repository exists and removing it if necessary..."
+                echo "Checking if the manifest repository exists and removing it if necessary..."
                 sh '''
                     if [ -d "${MANIFEST_REPO}" ]; then
-                        echo "🚀 ${MANIFEST_REPO} exists, removing it..."
+                        echo "${MANIFEST_REPO} exists, removing it..."
                         rm -rf ${MANIFEST_REPO}
                     fi
                 '''
                 echo "🚀 Updating the image of the Manifest file..."
                 sh "git clone -b ${GIT_BRANCH} ${GIT_MANIFEST_REPO} ${MANIFEST_REPO}"
-                sh "ls -l"
             }
         }
 
         stage("Updating the manifest file") {
             steps {
                 script {
-                    echo "🚀 Update the image in the deployment manifest..."
+                    echo "Update the image in the deployment manifest..."
                     sh """
                     sed -i 's|image: ${IMAGE}:.*|image: ${DOCKER_IMAGE}|' ${MANIFEST_REPO}/${MANIFEST_FILE_PATH}
                     """
